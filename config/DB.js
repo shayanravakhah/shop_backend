@@ -12,12 +12,7 @@ const db = new Sequelize(
   }
 );
 
-// const db = new Sequelize(process.env.MYSQL_PUBLIC_URL, {
-//   dialect: "mysql",
-//   dialectOptions: {
-//     ssl: { rejectUnauthorized: false }
-//   },
-//   logging: false
-// });
-
 export default db;
+
+// mysql -h shuttle.proxy.rlwy.net -u root -p --port 33397 --protocol=TCP railway
+// xniegZhNwDLRwDeQbCIXFoRPiytqVRIG

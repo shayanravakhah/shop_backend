@@ -80,7 +80,7 @@ export const deleteCategory = async (req, res) => {
         let fileName = null
         if (response[0].url) {
             try {
-                fileName = response[0].url.split("/").pop().split(".")[0];
+                fileName = response[0].url.split("/").pop().split("?")[0];
                 await cloudinary.uploader.destroy(`category/${fileName}`);
             } catch (error) {
                 console.log("Cloudinary delete failed:", err.message);
