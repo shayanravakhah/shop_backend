@@ -97,13 +97,13 @@ export const deleteProduct = async (req, res) => {
             WHERE p.product_id = ${req.params.id}
         `;
         const [response] = await db.query(selectQuery);
+        if (!response[0]) return res.status(404).json({ msg: "The product was not found ." });
         const removed = response[0];
-        if (!removed) return res.status(404).json({ msg: "The product was not found ." });
         let fileName = null;
 
         if (removed.url) {
             try {
-                fileName = removed.url.split("/").pop().split(".")[0];
+                fileName = removed.url.split("/").pop().split("?")[0];
                 await cloudinary.uploader.destroy(`product/${fileName}`);
             } catch (err) {
                 console.log("Cloudinary delete failed:", err.message);
