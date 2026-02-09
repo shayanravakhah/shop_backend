@@ -128,8 +128,8 @@ export const updateProduct = async (req, res) => {
             WHERE p.product_id = ${req.params.id}
         `;
         const [response] = await db.query(selectQuery);
+        if (!response[0]) return res.status(404).json({ msg: "The product was not found." });
         const updated = response[0];
-        if (!updated) return res.status(404).json({ msg: "The product was not found." });
         if (req.body && req.body.category_id) {
             const selectCategoryQuery = `
                 SELECT *
@@ -148,21 +148,45 @@ export const updateProduct = async (req, res) => {
             const fileSize = file.data.length;
             if (fileSize > 5 * 1024 * 1024) return res.status(400).json({ msg: "The image size is larger than 5 MB." });
             const dateNow = Date.now();
-            const uploadResult = await cloudinary.uploader.upload(
+            const fileName = updated.url.split("/").pop().split("?")[0];
+            const resCloud = await cloudinary.uploader.destroy(`product/${fileName}`);
+            if (resCloud.result !== "ok") return res.status(500).json({ msg: "Cloudinary delete failed for product update." });
+            let i = 0;
+            let uploadResult = await cloudinary.uploader.upload(
                 file.tempFilePath,
                 {
                     folder: 'product',
                     public_id: dateNow
                 }
             );
+            while (i < 5 && uploadResult.result !== "ok") {
+
+                uploadResult = await cloudinary.uploader.upload(
+                    file.tempFilePath,
+                    {
+                        folder: 'product',
+                        public_id: dateNow
+                    }
+                );
+                i++
+            }
             if (!uploadResult) return res.status(500).json({ msg: "Image upload failed." });
             const optimizeUrl = cloudinary.url(`product/${dateNow}`, {
                 fetch_format: "auto",
                 quality: "auto",
             });
+            if (!optimizeUrl) {
+                let res = await cloudinary.uploader.destroy(`product/${dateNow}`);
+                let attempt = 0;
+                while (res.result !== "ok" && attempt < 3) {
+                    res = await cloudinary.uploader.destroy(`product/${dateNow}`);
+                    attempt++;
+
+                }
+                return res.status(500).json({ msg: "Image optimization failed." });
+            }
             const url = optimizeUrl;
-            const fileName = updated.url.split("/").pop().split("?")[0];
-            await cloudinary.uploader.destroy(`product/${fileName}`);
+
             const updateQuery = `
                     UPDATE product
                     SET
