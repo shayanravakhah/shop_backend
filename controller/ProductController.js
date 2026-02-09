@@ -143,12 +143,14 @@ export const updateProduct = async (req, res) => {
         const category_id = req.body && req.body.category_id || updated.category_id
         const description = req.body && req.body.description || updated.description
         const price = req.body && req.body.price || updated.price
+        console.log("ok1");
         if (req.files && req.files.file) {
             const file = req.files.file;
             const fileSize = file.data.length;
             if (fileSize > 5 * 1024 * 1024) return res.status(400).json({ msg: "The image size is larger than 5 MB." });
             const dateNow = Date.now();
             const fileName = updated.url.split("/").pop().split("?")[0];
+            console.log("ok2");
             const resCloud = await cloudinary.uploader.destroy(`product/${fileName}`);
             if (resCloud.result !== "ok") return res.status(500).json({ msg: "Cloudinary delete failed for product update." });
             let i = 0;
@@ -159,6 +161,8 @@ export const updateProduct = async (req, res) => {
                     public_id: dateNow
                 }
             );
+            console.log("ok3");
+
             while (i < 5 && uploadResult.result !== "ok") {
 
                 uploadResult = await cloudinary.uploader.upload(
@@ -170,6 +174,8 @@ export const updateProduct = async (req, res) => {
                 );
                 i++
             }
+            console.log("ok4");
+
             if (!uploadResult) return res.status(500).json({ msg: "Image upload failed." });
             const optimizeUrl = cloudinary.url(`product/${dateNow}`, {
                 fetch_format: "auto",
