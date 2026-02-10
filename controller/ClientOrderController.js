@@ -5,6 +5,8 @@ export const getAllOerders = async (req, res) => {
         const selectQuery = `
             SELECT c.*, p.name AS product_name
             FROM client_order AS c INNER JOIN product AS p ON c.product_id = p.product_id
+            WHERE c.is_receive = FALSE
+            ORDER BY c.created_at  ASC
         `;
         const [orders] = await db.query(selectQuery);
         return res.status(200).json(orders);
