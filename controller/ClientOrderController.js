@@ -1,4 +1,5 @@
 import db from "../config/DB.js";
+import { EmailSender } from "../config/Email.js";
 
 export const getAllOerders = async (req, res) => {
     try {
@@ -28,6 +29,7 @@ export const getOneOrder = async (req, res) => {
         return res.status(500).json({ msg: error })
     }
 }
+
 export const saveOrder = async (req, res) => {
     try {
         if (!req.body) return res.status(400).json({ msg: "Please provide some information about the order." });
@@ -57,6 +59,13 @@ export const saveOrder = async (req, res) => {
             VALUES ('${name}', ${product_id}, '${email}', '${zip_code}', '${phone_number}', '${address}', ${amount})
         `
         await db.query(insertQuery);
+        EmailSender(
+            email,
+            response[0].name,
+            response[0].url,
+            response[0].description,
+            response[0].price,
+        )
         return res.status(200).json({ msg: "Your order was registered successfully ." })
     } catch (error) {
         return res.status(500).json({ msg: error });
