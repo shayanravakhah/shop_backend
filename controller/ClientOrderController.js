@@ -59,7 +59,7 @@ export const saveOrder = async (req, res) => {
             VALUES ('${name}', ${product_id}, '${email}', '${zip_code}', '${phone_number}', '${address}', ${amount})
         `
         await db.query(insertQuery);
-        EmailSender(
+        await EmailSender(
             email,
             response[0].name,
             response[0].url,
