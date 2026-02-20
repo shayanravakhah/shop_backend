@@ -26,7 +26,7 @@ export const EmailSender = async (
         <p style="color:#555; font-size:16px; text-align:center;">
           Quantity: <b>${amount}</b>
         </p>
-        <p style="color:#1E90FF; font-size:18px; text-align:center; font-weight:bold;">Price: $${productPrice.toFixed(2)} 🪙</p>
+        <p style="color:#4DA3FF; font-size:18px; text-align:center; font-weight:bold;">Price: $${productPrice.toFixed(2)} 🪙</p>
 
         <p style="text-align:center; margin-top:30px; color:#777;">
           We hope you enjoy your purchase! 🛍️
