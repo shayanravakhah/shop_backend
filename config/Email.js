@@ -2,12 +2,13 @@ import { Resend } from "resend";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-export const EmailSenderShop = async (
+export const EmailSender = async (
   toEmail,
   productName,
   productImageUrl,
   productDescription,
-  productPrice
+  productPrice,
+  amount
 ) => {
   await resend.emails.send({
     from: "onboarding@resend.dev",
@@ -22,7 +23,10 @@ export const EmailSenderShop = async (
         <img src="${productImageUrl}" alt="${productName}" style="width:100%; max-width:300px; display:block; margin:0 auto 20px; border-radius:8px;" />
 
         <p style="color:#555; font-size:16px; text-align:center;">${productDescription}</p>
-        <p style="color:#E74C3C; font-size:18px; text-align:center; font-weight:bold;">Price: $${productPrice.toFixed(2)}</p>
+        <p style="color:#555; font-size:16px; text-align:center;">
+          Quantity: <b>${amount}</b>
+        </p>
+        <p style="color:#E74C3C; font-size:18px; text-align:center; font-weight:bold;">Price: $${productPrice.toFixed(2)} 🪙</p>
 
         <p style="text-align:center; margin-top:30px; color:#777;">
           We hope you enjoy your purchase! 🛍️

@@ -65,6 +65,7 @@ export const saveOrder = async (req, res) => {
             response[0].url,
             response[0].description,
             response[0].price,
+            amount
         )
         return res.status(200).json({ msg: "Your order was registered successfully ." })
     } catch (error) {
