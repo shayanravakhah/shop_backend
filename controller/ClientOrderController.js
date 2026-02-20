@@ -59,14 +59,18 @@ export const saveOrder = async (req, res) => {
             VALUES ('${name}', ${product_id}, '${email}', '${zip_code}', '${phone_number}', '${address}', ${amount})
         `
         await db.query(insertQuery);
-        await EmailSender(
-            email,
-            response[0].name,
-            response[0].url,
-            response[0].description,
-            response[0].price,
-            amount
-        )
+        try {
+            await EmailSender(
+                email,
+                response[0].name,
+                response[0].url,
+                response[0].description,
+                response[0].price,
+                amount
+            );
+        } catch (emailError) {
+            console.log("Email failed:", emailError.message);
+        }
         return res.status(200).json({ msg: "Your order was registered successfully ." })
     } catch (error) {
         return res.status(500).json({ msg: error });
